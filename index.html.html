@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matematika Kelas 9 - Median</title>
+<style>
+  :root{--p:#4f46e5;--p2:#7c3aed;--bg:#f1f5f9;--card:#fff;--tx:#1e293b;--mut:#64748b;--ok:#16a34a;--bad:#dc2626;--line:#e2e8f0}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+  body{background:var(--bg);color:var(--tx);min-height:100vh}
+  header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 16px;text-align:center}
+  header h1{font-size:1.5rem}
+  header p{opacity:.9;font-size:.9rem;margin-top:4px}
+  nav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;background:#fff;padding:10px;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0001}
+  nav button{border:0;background:transparent;padding:10px 18px;border-radius:999px;font-weight:600;cursor:pointer;color:var(--mut);font-size:.95rem}
+  nav button.active{background:var(--p);color:#fff}
+  nav button:hover:not(.active){background:#eef2ff}
+  main{max-width:860px;margin:20px auto;padding:0 14px 60px}
+  section{display:none}
+  section.active{display:block;animation:fade .3s}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+  .card{background:var(--card);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 10px #0001}
+  h2{margin-bottom:12px;color:var(--p)}
+  h3{margin:14px 0 8px}
+  p,li{line-height:1.65}
+  ul{margin-left:20px}
+  label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+  input,select{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:1rem}
+  input:focus,select:focus{outline:2px solid var(--p);border-color:transparent}
+  .btn{background:var(--p);color:#fff;border:0;padding:12px 22px;border-radius:10px;font-weight:700;cursor:pointer;font-size:1rem;margin-top:14px}
+  .btn:hover{background:var(--p2)}
+  .btn.sec{background:#e2e8f0;color:var(--tx)}
+  .btn.red{background:var(--bad)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .formula{background:#eef2ff;border-left:4px solid var(--p);padding:12px 16px;border-radius:8px;margin:10px 0;font-size:1.02rem}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .chip{background:#e0e7ff;color:var(--p);padding:8px 14px;border-radius:10px;font-weight:700;min-width:40px;text-align:center}
+  .chip.mid{background:var(--p);color:#fff;transform:scale(1.12)}
+  .chip.mode{background:#fde68a;color:#92400e}
+  .msg{padding:11px 14px;border-radius:10px;margin-top:12px;font-weight:600}
+  .msg.ok{background:#dcfce7;color:#166534}
+  .msg.warn{background:#fef9c3;color:#854d0e}
+  .msg.err{background:#fee2e2;color:#991b1b}
+  .q{border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .q .no{font-weight:700;color:var(--p);margin-bottom:6px}
+  .opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;margin-top:8px;cursor:pointer}
+  .opt:hover{background:#f8fafc}
+  .opt input{width:auto}
+  .opt.sel{border-color:var(--p);background:#eef2ff}
+  .opt.right{border-color:var(--ok);background:#dcfce7}
+  .opt.wrong{border-color:var(--bad);background:#fee2e2}
+  .score{text-align:center;font-size:3.2rem;font-weight:800;color:var(--p)}
+  .progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+  .progress div{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));width:0;transition:width .3s}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
+  th{background:#f8fafc}
+  .tbl{overflow-x:auto}
+  textarea{width:100%;height:110px;padding:10px;border:1.5px solid var(--line);border-radius:10px;font-family:monospace;font-size:.85rem}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:140px}
+  .badge{padding:3px 10px;border-radius:99px;font-weight:700;font-size:.8rem}
+  .b-g{background:#dcfce7;color:#166534}.b-y{background:#fef9c3;color:#854d0e}.b-r{background:#fee2e2;color:#991b1b}
+  /* GAME */
+  .hud{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-weight:700;margin-bottom:10px}
+  .hud span{background:#eef2ff;color:var(--p);padding:6px 12px;border-radius:99px;font-size:.9rem}
+  .tbar{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+  .tbar div{height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);background-size:300% 100%;transition:width .25s linear}
+  .gq{font-size:1.15rem;font-weight:700;margin:6px 0}
+  .gchips{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;justify-content:center}
+  .gchips .chip{font-size:1.3rem;padding:12px 16px;box-shadow:0 3px 0 #c7d2fe;animation:pop .35s}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .gopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .gopt{padding:16px;font-size:1.3rem;font-weight:800;border-radius:12px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--tx)}
+  .gopt:hover:not(:disabled){border-color:var(--p);background:#eef2ff;transform:translateY(-2px)}
+  .gopt.right{background:#dcfce7;border-color:var(--ok)}
+  .gopt.wrong{background:#fee2e2;border-color:var(--bad)}
+  .shake{animation:shake .4s}
+  @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .stars{font-size:2.6rem;text-align:center}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Matematika Kelas 9 • Fase D</h1>
+  <p>Materi: Median dan Ukuran Pemusatan Data (Mean, Median, Modus)</p>
+</header>
+
+<nav>
+  <button data-tab="presensi" class="active">📝 Presensi</button>
+  <button data-tab="materi">📚 Materi</button>
+  <button data-tab="assessment">✅ Assessment</button>
+  <button data-tab="game">🎮 Game</button>
+  <button data-tab="guru">👩‍🏫 Hasil (Guru)</button>
+</nav>
+
+<main>
+
+<!-- ============ PRESENSI ============ -->
+<section id="presensi" class="active">
+  <div class="card">
+    <h2>Presensi Siswa</h2>
+    <p>Isi data dirimu sebelum belajar. Data ini juga dipakai saat Assessment.</p>
+    <label>Nama Lengkap</label><input id="p-nama" placeholder="Contoh: Budi Santoso">
+    <div class="row">
+      <div><label>Kelas</label>
+        <select id="p-kelas"><option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option></select></div>
+      <div><label>No. Absen</label><input id="p-absen" type="number" min="1" placeholder="1"></div>
+    </div>
+    <label>Status Kehadiran</label>
+    <select id="p-status"><option>Hadir</option><option>Izin</option><option>Sakit</option></select>
+    <button class="btn" id="btn-presensi">Kirim Presensi</button>
+    <div id="p-msg"></div>
+  </div>
+  <div class="card">
+    <h3>Riwayat Presensi di Perangkat Ini</h3>
+    <div class="tbl"><table><thead><tr><th>Waktu</th><th>Nama</th><th>Kelas</th><th>Status</th></tr></thead><tbody id="p-list"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ============ MATERI ============ -->
+<section id="materi">
+  <div class="card">
+    <h2>1. Apa itu Ukuran Pemusatan Data?</h2>
+    <p>Ukuran pemusatan data adalah nilai yang mewakili sekumpulan data. Ada tiga ukuran utama:</p>
+    <ul>
+      <li><b>Mean (rata-rata)</b>: jumlah semua data dibagi banyak data.</li>
+      <li><b>Median</b>: nilai tengah setelah data diurutkan dari terkecil ke terbesar.</li>
+      <li><b>Modus</b>: nilai yang paling sering muncul.</li>
+    </ul>
+    <div class="formula"><b>Mean</b> = (x₁ + x₂ + … + xₙ) ÷ n</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Cara Menentukan Median</h2>
+    <p><b>Langkah:</b> (1) urutkan data, (2) tentukan banyak data (n), (3) cari nilai tengahnya.</p>
+    <div class="formula"><b>n ganjil:</b> Median = data ke-(n+1)/2<br><b>n genap:</b> Median = (data ke-n/2 + data ke-(n/2 + 1)) ÷ 2</div>
+    <h3>Contoh</h3>
+    <p>Data: 7, 3, 9, 5, 8 → urut: 3, 5, <b>7</b>, 8, 9 → n = 5 (ganjil) → median = data ke-3 = <b>7</b>.</p>
+    <p>Data: 4, 6, 8, 10 → n = 4 (genap) → median = (6 + 8) ÷ 2 = <b>7</b>.</p>
+  </div>
+
+  <div class="card">
+    <h2>3. 🧪 Coba Sendiri: Kalkulator Interaktif</h2>
+    <p>Masukkan data (pisahkan dengan koma), lalu lihat langkah-langkahnya.</p>
+    <label>Data</label><input id="k-data" value="7, 3, 9, 5, 8, 5">
+    <div class="row">
+      <button class="btn" id="k-hitung">Hitung</button>
+      <button class="btn sec" id="k-acak">🎲 Data Acak</button>
+    </div>
+    <div id="k-out"></div>
+  </div>
+
+  <div class="card">
+    <h2>4. Rangkuman</h2>
+    <ul>
+      <li>Selalu <b>urutkan data</b> dulu sebelum mencari median.</li>
+      <li>Banyak data ganjil → median adalah satu nilai di tengah.</li>
+      <li>Banyak data genap → median adalah rata-rata dua nilai di tengah.</li>
+      <li>Modus bisa lebih dari satu, atau tidak ada jika semua data muncul sama banyak.</li>
+    </ul>
+    <button class="btn" onclick="goTab('assessment')">Lanjut ke Assessment →</button>
+  </div>
+</section>
+
+<!-- ============ ASSESSMENT ============ -->
+<section id="assessment">
+  <div class="card" id="a-start">
+    <h2>Assessment: 5 Soal Pilihan Ganda</h2>
+    <p>Setiap soal bernilai 20 poin. Skor maksimal 100. Jawaban hanya bisa dikirim sekali.</p>
+    <label>Nama Lengkap</label><input id="a-nama" placeholder="Nama siswa">
+    <div class="row">
+      <div><label>Kelas</label>
+        <select id="a-kelas"><option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option></select></div>
+      <div><label>No. Absen</label><input id="a-absen" type="number" min="1"></div>
+    </div>
+    <button class="btn" id="a-mulai">Mulai Kerjakan</button>
+    <div id="a-msg"></div>
+  </div>
+
+  <div class="card" id="a-quiz" style="display:none">
+    <div class="progress"><div id="a-bar"></div></div>
+    <div id="a-qlist"></div>
+    <button class="btn" id="a-kirim">Kirim Jawaban</button>
+    <div id="a-msg2"></div>
+  </div>
+
+  <div class="card" id="a-hasil" style="display:none">
+    <h2 style="text-align:center">Hasil Kamu</h2>
+    <div class="score" id="a-skor">0</div>
+    <p style="text-align:center;color:var(--mut)" id="a-ket"></p>
+    <h3>Pembahasan</h3>
+    <div id="a-bahas"></div>
+    <h3>Laporan untuk Guru</h3>
+    <p style="color:var(--mut);font-size:.9rem">Hasil tersimpan di perangkat ini. Jika guru memeriksa dari perangkat lain, salin laporan di bawah lalu kirim ke guru (WhatsApp/LMS).</p>
+    <textarea id="a-laporan" readonly></textarea>
+    <button class="btn sec" id="a-salin">📋 Salin Laporan</button>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="game">
+  <div class="card" id="gm-start">
+    <h2>🎮 Median Quest</h2>
+    <p>Jawab 10 tantangan secepat mungkin: median ganjil, median genap, modus, dan mean. Kamu punya <b>3 nyawa ❤️</b> dan <b>20 detik</b> per soal. Jawaban benar berturut-turut memberi bonus combo 🔥. Tombol 💡 akan mengurutkan data (poin dikurangi).</p>
+    <label>Nama Pemain</label><input id="gm-nama" placeholder="Nama kamu">
+    <button class="btn" id="gm-mulai">▶ Mulai Main</button>
+    <div id="gm-msg"></div>
+    <h3>🏆 Papan Skor (perangkat ini)</h3>
+    <div class="tbl"><table><thead><tr><th>#</th><th>Nama</th><th>Skor</th><th>Benar</th></tr></thead><tbody id="gm-board"></tbody></table></div>
+  </div>
+
+  <div class="card" id="gm-play" style="display:none">
+    <div class="hud"><span id="gm-nyawa">❤️❤️❤️</span><span id="gm-ronde">Soal 1/10</span><span id="gm-skor">⭐ 0</span><span id="gm-combo">🔥 x0</span></div>
+    <div class="tbar"><div id="gm-timer"></div></div>
+    <div class="gq" id="gm-q"></div>
+    <div class="gchips" id="gm-chips"></div>
+    <div class="gopts" id="gm-opts"></div>
+    <div id="gm-fb"></div>
+    <div class="row">
+      <button class="btn sec" id="gm-hint">💡 Bantuan: Urutkan (-3 poin)</button>
+      <button class="btn" id="gm-next" style="display:none">Lanjut →</button>
+    </div>
+  </div>
+
+  <div class="card" id="gm-end" style="display:none">
+    <h2 style="text-align:center" id="gm-judul">Selesai!</h2>
+    <div class="stars" id="gm-stars"></div>
+    <div class="score" id="gm-final">0</div>
+    <p style="text-align:center;color:var(--mut)" id="gm-ket"></p>
+    <div class="row">
+      <button class="btn" id="gm-ulang">🔄 Main Lagi</button>
+      <button class="btn sec" onclick="goTab('materi')">📚 Belajar Lagi</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GURU ============ -->
+<section id="guru">
+  <div class="card" id="g-login">
+    <h2>Area Guru</h2>
+    <label>PIN Guru</label><input id="g-pin" type="password" placeholder="Masukkan PIN">
+    <button class="btn" id="g-masuk">Masuk</button>
+    <div id="g-msg"></div>
+    <p style="color:var(--mut);font-size:.85rem;margin-top:10px">PIN bawaan: <b>1234</b> (ubah di konstanta <code>PIN_GURU</code> pada kode).</p>
+  </div>
+
+  <div id="g-panel" style="display:none">
+    <div class="card">
+      <h2>Rekap Nilai Assessment</h2>
+      <div class="row" style="margin-bottom:10px">
+        <div><b>Jumlah siswa:</b> <span id="g-n">0</span></div>
+        <div><b>Rata-rata kelas:</b> <span id="g-avg">0</span></div>
+        <div><b>Tertinggi / Terendah:</b> <span id="g-mm">-</span></div>
+      </div>
+      <div class="tbl"><table>
+        <thead><tr><th>Waktu</th><th>Nama</th><th>Kelas</th><th>Absen</th><th>Benar</th><th>Skor</th><th>Jawaban</th></tr></thead>
+        <tbody id="g-list"></tbody></table></div>
+      <div class="row">
+        <button class="btn" id="g-csv">⬇️ Unduh CSV</button>
+        <button class="btn sec" id="g-imp">📥 Impor Laporan Siswa</button>
+      </div>
+      <div id="g-imp-box" style="display:none">
+        <label>Tempel laporan siswa (satu laporan = satu baris JSON dimulai dengan HASIL|)</label>
+        <textarea id="g-imp-text"></textarea>
+        <button class="btn" id="g-imp-ok">Impor</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Rekap Skor Game (Median Quest)</h2>
+      <div class="tbl"><table><thead><tr><th>Waktu</th><th>Nama</th><th>Skor Game</th><th>Benar</th></tr></thead><tbody id="g-glist"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Rekap Presensi</h2>
+      <div class="tbl"><table><thead><tr><th>Waktu</th><th>Nama</th><th>Kelas</th><th>Absen</th><th>Status</th></tr></thead><tbody id="g-plist"></tbody></table></div>
+      <button class="btn sec" id="g-pcsv">⬇️ Unduh CSV Presensi</button>
+    </div>
+    <div class="card">
+      <button class="btn red" id="g-reset">🗑️ Hapus Semua Data</button>
+      <button class="btn sec" id="g-keluar">Keluar</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ================== KONFIGURASI ================== */
+const PIN_GURU = "1234";
+const KEY_ABS = "mtk9_presensi";
+const KEY_HASIL = "mtk9_hasil";
+const KEY_GAME = "mtk9_game";
+
+const SOAL = [
+  {q:"Median dari data 6, 8, 7, 5, 9 adalah ...", o:["6","7","8","9"], k:1,
+   p:"Urutkan: 5, 6, 7, 8, 9. n = 5 (ganjil), median = data ke-3 = 7."},
+  {q:"Median dari data 4, 6, 8, 10, 12, 14 adalah ...", o:["8","9","10","11"], k:1,
+   p:"n = 6 (genap). Median = (data ke-3 + data ke-4) ÷ 2 = (8 + 10) ÷ 2 = 9."},
+  {q:"Modus dari data 5, 7, 7, 8, 9, 7, 6 adalah ...", o:["5","6","7","9"], k:2,
+   p:"Angka 7 muncul paling sering, yaitu 3 kali."},
+  {q:"Nilai ulangan 5 siswa: 70, 80, 90, 60, 100. Rata-rata (mean) nilainya adalah ...", o:["70","78","80","85"], k:2,
+   p:"Jumlah = 400. Mean = 400 ÷ 5 = 80."},
+  {q:"Median dari data 3, 5, 6, 6, 7, 9, 10, 12 adalah ...", o:["6","6,5","7","6,6"], k:1,
+   p:"n = 8 (genap). Median = (data ke-4 + data ke-5) ÷ 2 = (6 + 7) ÷ 2 = 6,5."}
+];
+
+/* ================== UTIL ================== */
+const $ = id => document.getElementById(id);
+const load = k => { try{return JSON.parse(localStorage.getItem(k)) || []}catch(e){return []} };
+const save = (k,v) => { try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} };
+const now = () => new Date().toLocaleString("id-ID");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const msg = (el,t,type) => el.innerHTML = `<div class="msg ${type}">${t}</div>`;
+
+/* ================== NAVIGASI ================== */
+function goTab(t){
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===t));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(t==="presensi") renderPresensi();
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
+
+/* ================== PRESENSI ================== */
+function renderPresensi(){
+  const d = load(KEY_ABS).slice(-10).reverse();
+  $("p-list").innerHTML = d.length ? d.map(r=>`<tr><td>${esc(r.waktu)}</td><td>${esc(r.nama)}</td><td>${esc(r.kelas)}</td><td>${esc(r.status)}</td></tr>`).join("")
+    : `<tr><td colspan="4" style="color:var(--mut)">Belum ada presensi.</td></tr>`;
+}
+$("btn-presensi").onclick = () => {
+  const nama = $("p-nama").value.trim(), absen = $("p-absen").value;
+  if(!nama || !absen) return msg($("p-msg"),"Nama dan No. Absen wajib diisi.","err");
+  const d = load(KEY_ABS);
+  const tgl = new Date().toLocaleDateString("id-ID");
+  if(d.some(r=>r.nama.toLowerCase()===nama.toLowerCase() && r.kelas===$("p-kelas").value && r.tgl===tgl))
+    return msg($("p-msg"),"Kamu sudah presensi hari ini.","warn");
+  d.push({waktu:now(),tgl,nama,kelas:$("p-kelas").value,absen,status:$("p-status").value});
+  save(KEY_ABS,d);
+  msg($("p-msg"),`Presensi berhasil, ${esc(nama)}! Silakan buka menu Materi.`,"ok");
+  $("a-nama").value = nama; $("a-kelas").value = $("p-kelas").value; $("a-absen").value = absen;
+  renderPresensi();
+};
+
+/* ================== KALKULATOR MATERI ================== */
+function hitung(){
+  const arr = $("k-data").value.split(/[,;\s]+/).map(Number).filter(x=>!isNaN(x) && x!==0 || x===0).filter(x=>!isNaN(x));
+  const raw = $("k-data").value.split(/[,;\s]+/).filter(s=>s!=="");
+  if(!raw.length || raw.some(s=>isNaN(Number(s)))) return msg($("k-out"),"Masukkan angka saja, dipisah koma.","err");
+  const a = raw.map(Number).sort((x,y)=>x-y), n = a.length;
+  const sum = a.reduce((s,x)=>s+x,0), mean = sum/n;
+  let med, midIdx;
+  if(n%2){ med = a[(n-1)/2]; midIdx=[(n-1)/2]; }
+  else { med = (a[n/2-1]+a[n/2])/2; midIdx=[n/2-1,n/2]; }
+  const f = {}; a.forEach(x=>f[x]=(f[x]||0)+1);
+  const mx = Math.max(...Object.values(f));
+  const modus = mx===1 ? [] : Object.keys(f).filter(k=>f[k]===mx).map(Number);
+  const r = x => Math.round(x*100)/100;
+  $("k-out").innerHTML = `
+    <h3>Data setelah diurutkan</h3>
+    <div class="chips">${a.map((x,i)=>`<div class="chip ${midIdx.includes(i)?"mid":""} ${modus.includes(x)?"mode":""}">${x}</div>`).join("")}</div>
+    <p><b>n</b> = ${n} (${n%2?"ganjil":"genap"})</p>
+    <div class="formula"><b>Median</b> = ${n%2?`data ke-${(n+1)/2} = ${med}`:`(data ke-${n/2} + data ke-${n/2+1}) ÷ 2 = (${a[n/2-1]} + ${a[n/2]}) ÷ 2 = ${r(med)}`}</div>
+    <div class="formula"><b>Mean</b> = ${sum} ÷ ${n} = ${r(mean)}</div>
+    <div class="formula"><b>Modus</b> = ${modus.length?modus.join(", "):"tidak ada"}</div>
+    <p style="color:var(--mut);font-size:.85rem">Ungu = posisi median • Kuning = modus</p>`;
+}
+$("k-hitung").onclick = hitung;
+$("k-acak").onclick = () => {
+  const n = 5+Math.floor(Math.random()*5);
+  $("k-data").value = Array.from({length:n},()=>1+Math.floor(Math.random()*10)).join(", ");
+  hitung();
+};
+hitung();
+
+/* ================== ASSESSMENT ================== */
+let jawab = [], siswa = null;
+function mulai(){
+  const nama = $("a-nama").value.trim(), absen = $("a-absen").value;
+  if(!nama || !absen) return msg($("a-msg"),"Lengkapi nama dan No. Absen dulu.","err");
+  const kelas = $("a-kelas").value;
+  if(load(KEY_HASIL).some(r=>r.nama.toLowerCase()===nama.toLowerCase() && r.kelas===kelas))
+    return msg($("a-msg"),"Nama ini sudah mengerjakan assessment di perangkat ini.","warn");
+  siswa = {nama,kelas,absen}; jawab = Array(SOAL.length).fill(null);
+  $("a-start").style.display="none"; $("a-quiz").style.display="block";
+  renderSoal();
+}
+function renderSoal(){
+  $("a-qlist").innerHTML = SOAL.map((s,i)=>`
+    <div class="q"><div class="no">Soal ${i+1} dari ${SOAL.length}</div><p>${s.q}</p>
+    ${s.o.map((o,j)=>`<label class="opt ${jawab[i]===j?"sel":""}"><input type="radio" name="q${i}" ${jawab[i]===j?"checked":""} onchange="pilih(${i},${j})"> <b>${"ABCD"[j]}.</b> ${o}</label>`).join("")}</div>`).join("");
+  const done = jawab.filter(x=>x!==null).length;
+  $("a-bar").style.width = (done/SOAL.length*100)+"%";
+}
+function pilih(i,j){ jawab[i]=j; renderSoal(); }
+$("a-mulai").onclick = mulai;
+$("a-kirim").onclick = () => {
+  const kosong = jawab.filter(x=>x===null).length;
+  if(kosong && !confirm(`Masih ada ${kosong} soal belum dijawab. Tetap kirim?`)) return;
+  const benar = jawab.filter((x,i)=>x===SOAL[i].k).length;
+  const skor = Math.round(benar/SOAL.length*100);
+  const rec = {waktu:now(),nama:siswa.nama,kelas:siswa.kelas,absen:siswa.absen,benar,skor,
+               jawaban:jawab.map(x=>x===null?"-":"ABCD"[x]).join("")};
+  const d = load(KEY_HASIL); d.push(rec); save(KEY_HASIL,d);
+  $("a-quiz").style.display="none"; $("a-hasil").style.display="block";
+  $("a-skor").textContent = skor;
+  $("a-ket").textContent = `${benar} dari ${SOAL.length} soal benar • ` + (skor>=80?"Sangat baik! 🎉":skor>=60?"Cukup baik, terus berlatih 💪":"Ayo pelajari materi lagi 📚");
+  $("a-bahas").innerHTML = SOAL.map((s,i)=>{
+    const ok = jawab[i]===s.k;
+    return `<div class="q"><div class="no">Soal ${i+1} ${ok?"✅":"❌"}</div><p>${s.q}</p>
+      <p>Jawabanmu: <b>${jawab[i]===null?"tidak dijawab":"ABCD"[jawab[i]]+". "+s.o[jawab[i]]}</b> • Kunci: <b>${"ABCD"[s.k]}. ${s.o[s.k]}</b></p>
+      <p style="color:var(--mut)">${s.p}</p></div>`;}).join("");
+  $("a-laporan").value = "HASIL|"+JSON.stringify(rec);
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+$("a-salin").onclick = () => {
+  const t = $("a-laporan"); t.select();
+  try{ document.execCommand("copy"); $("a-salin").textContent="✅ Tersalin"; }catch(e){}
+};
+
+/* ================== GURU ================== */
+function skorBadge(s){ return `<span class="badge ${s>=80?"b-g":s>=60?"b-y":"b-r"}">${s}</span>`; }
+function renderGuru(){
+  const h = load(KEY_HASIL), p = load(KEY_ABS), gg = load(KEY_GAME);
+  $("g-glist").innerHTML = gg.length ? gg.map(r=>`<tr><td>${esc(r.waktu)}</td><td>${esc(r.nama)}</td><td>${r.skor}</td><td>${r.benar}/10</td></tr>`).join("")
+    : `<tr><td colspan="4" style="color:var(--mut)">Belum ada yang bermain.</td></tr>`;
+  $("g-n").textContent = h.length;
+  $("g-avg").textContent = h.length ? Math.round(h.reduce((s,r)=>s+r.skor,0)/h.length*10)/10 : 0;
+  $("g-mm").textContent = h.length ? Math.max(...h.map(r=>r.skor))+" / "+Math.min(...h.map(r=>r.skor)) : "-";
+  $("g-list").innerHTML = h.length ? h.map(r=>`<tr><td>${esc(r.waktu)}</td><td>${esc(r.nama)}</td><td>${esc(r.kelas)}</td><td>${esc(r.absen)}</td><td>${r.benar}/5</td><td>${skorBadge(r.skor)}</td><td>${esc(r.jawaban)}</td></tr>`).join("")
+    : `<tr><td colspan="7" style="color:var(--mut)">Belum ada hasil.</td></tr>`;
+  $("g-plist").innerHTML = p.length ? p.map(r=>`<tr><td>${esc(r.waktu)}</td><td>${esc(r.nama)}</td><td>${esc(r.kelas)}</td><td>${esc(r.absen)}</td><td>${esc(r.status)}</td></tr>`).join("")
+    : `<tr><td colspan="5" style="color:var(--mut)">Belum ada presensi.</td></tr>`;
+}
+function unduh(nama,rows){
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));
+  a.download = nama; a.click();
+}
+$("g-masuk").onclick = () => {
+  if($("g-pin").value!==PIN_GURU) return msg($("g-msg"),"PIN salah.","err");
+  $("g-login").style.display="none"; $("g-panel").style.display="block"; renderGuru();
+};
+$("g-keluar").onclick = () => { $("g-panel").style.display="none"; $("g-login").style.display="block"; $("g-pin").value=""; $("g-msg").innerHTML=""; };
+$("g-csv").onclick = () => unduh("hasil_assessment.csv",
+  [["Waktu","Nama","Kelas","Absen","Benar","Skor (0-100)","Jawaban"],...load(KEY_HASIL).map(r=>[r.waktu,r.nama,r.kelas,r.absen,r.benar,r.skor,r.jawaban])]);
+$("g-pcsv").onclick = () => unduh("presensi.csv",
+  [["Waktu","Nama","Kelas","Absen","Status"],...load(KEY_ABS).map(r=>[r.waktu,r.nama,r.kelas,r.absen,r.status])]);
+$("g-imp").onclick = () => $("g-imp-box").style.display = $("g-imp-box").style.display==="none"?"block":"none";
+$("g-imp-ok").onclick = () => {
+  const lines = $("g-imp-text").value.split("\n").filter(l=>l.startsWith("HASIL|"));
+  const d = load(KEY_HASIL); let n=0;
+  lines.forEach(l=>{ try{ const r=JSON.parse(l.slice(6));
+    if(r.nama && typeof r.skor==="number" && !d.some(x=>x.nama===r.nama&&x.kelas===r.kelas)){d.push(r);n++;} }catch(e){} });
+  save(KEY_HASIL,d); $("g-imp-text").value=""; renderGuru(); alert(n+" laporan berhasil diimpor.");
+};
+$("g-reset").onclick = () => {
+  if(confirm("Hapus SEMUA data presensi dan hasil? Tindakan ini tidak bisa dibatalkan.")){
+    localStorage.removeItem(KEY_ABS); localStorage.removeItem(KEY_HASIL); renderGuru(); renderPresensi();
+  }
+};
+
+/* ================== GAME: MEDIAN QUEST ================== */
+const TOTAL_RONDE = 10, WAKTU = 20;
+let GM = null, gmTimer = null;
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const shuf = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const fmt = x => String(x).replace(".",",");
+const uniqueNums = (n,max=20) => { const s=new Set(); while(s.size<n) s.add(rnd(1,max)); return shuf([...s]); };
+
+function buatSoal(){
+  const tipe = ["ganjil","genap","modus","mean"][rnd(0,3)];
+  let data, ans, q, bahas, salah=[];
+  if(tipe==="ganjil"){
+    data = uniqueNums([5,7][rnd(0,1)]);
+    const s = data.slice().sort((a,b)=>a-b), n = s.length;
+    ans = s[(n-1)/2]; q = "Tentukan MEDIAN dari data berikut!";
+    bahas = `Urutkan: ${s.join(", ")}. n = ${n} (ganjil), median = data ke-${(n+1)/2} = ${ans}.`;
+    salah = [data[(n-1)/2], Math.round(data.reduce((x,y)=>x+y,0)/n)];
+  } else if(tipe==="genap"){
+    data = uniqueNums([6,8][rnd(0,1)]);
+    const s = data.slice().sort((a,b)=>a-b), n = s.length;
+    const a = s[n/2-1], b = s[n/2]; ans = (a+b)/2; q = "Tentukan MEDIAN dari data berikut!";
+    bahas = `Urutkan: ${s.join(", ")}. n = ${n} (genap), median = (${a} + ${b}) ÷ 2 = ${fmt(ans)}.`;
+    salah = [a, b];
+  } else if(tipe==="modus"){
+    const m = rnd(1,20), n = rnd(7,9);
+    const lain = uniqueNums(n-3,20).filter(x=>x!==m);
+    while(lain.length<n-3) { const x=rnd(1,20); if(x!==m && !lain.includes(x)) lain.push(x); }
+    data = shuf([m,m,m,...lain]); ans = m; q = "Tentukan MODUS dari data berikut!";
+    bahas = `Angka ${m} muncul 3 kali, paling sering, jadi modusnya ${m}.`;
+    salah = lain.slice(0,2);
+  } else {
+    let n = 5, d;
+    do { d = Array.from({length:n},()=>rnd(2,20)); } while(d.reduce((x,y)=>x+y,0)%n!==0);
+    data = d; const sum = d.reduce((x,y)=>x+y,0); ans = sum/n; q = "Tentukan MEAN (rata-rata) dari data berikut!";
+    bahas = `Jumlah = ${d.join(" + ")} = ${sum}. Mean = ${sum} ÷ ${n} = ${ans}.`;
+    const s = d.slice().sort((a,b)=>a-b); salah = [s[2]];
+  }
+  const dec = !Number.isInteger(ans);
+  const kand = [...salah, ans+1, ans-1, ans+(dec?0.5:2), ans-(dec?0.5:2), ans+(dec?1.5:3)];
+  const opsi = [ans];
+  shuf(kand).forEach(x=>{ if(opsi.length<4 && x>0 && x!==ans && !opsi.includes(x)) opsi.push(x); });
+  return {tipe,data,ans,q,bahas,opsi:shuf(opsi),urut:false};
+}
+
+function renderGameBoard(){
+  const b = load(KEY_GAME).slice().sort((a,b)=>b.skor-a.skor).slice(0,5);
+  $("gm-board").innerHTML = b.length ? b.map((r,i)=>`<tr><td>${["🥇","🥈","🥉","4","5"][i]}</td><td>${esc(r.nama)}</td><td>${r.skor}</td><td>${r.benar}/10</td></tr>`).join("")
+    : `<tr><td colspan="4" style="color:var(--mut)">Belum ada skor. Jadilah yang pertama!</td></tr>`;
+  if(!$("gm-nama").value) $("gm-nama").value = $("a-nama").value || $("p-nama").value || "";
+}
+
+function hud(){
+  $("gm-nyawa").textContent = "❤️".repeat(GM.nyawa) + "🖤".repeat(3-GM.nyawa);
+  $("gm-ronde").textContent = `Soal ${GM.ronde}/${TOTAL_RONDE}`;
+  $("gm-skor").textContent = "⭐ " + GM.skor;
+  $("gm-combo").textContent = "🔥 x" + GM.combo;
+}
+function gambarChips(){
+  const d = GM.soal.urut ? GM.soal.data.slice().sort((a,b)=>a-b) : GM.soal.data;
+  $("gm-chips").innerHTML = d.map(x=>`<div class="chip">${x}</div>`).join("");
+}
+function mulaiGame(){
+  const nama = $("gm-nama").value.trim();
+  if(!nama) return msg($("gm-msg"),"Isi nama pemain dulu.","err");
+  GM = {nama, ronde:0, skor:0, nyawa:3, combo:0, benar:0, soal:null, sisa:WAKTU, kunci:false};
+  $("gm-start").style.display="none"; $("gm-end").style.display="none"; $("gm-play").style.display="block";
+  soalBerikut();
+}
+function soalBerikut(){
+  GM.ronde++; GM.soal = buatSoal(); GM.sisa = WAKTU; GM.kunci = false;
+  $("gm-q").textContent = GM.soal.q; $("gm-fb").innerHTML = "";
+  $("gm-next").style.display = "none"; $("gm-hint").style.display = GM.soal.tipe==="ganjil"||GM.soal.tipe==="genap" ? "block":"none";
+  $("gm-hint").disabled = false;
+  gambarChips();
+  $("gm-opts").innerHTML = GM.soal.opsi.map((o,i)=>`<button class="gopt" data-i="${i}">${fmt(o)}</button>`).join("");
+  $("gm-opts").querySelectorAll(".gopt").forEach(b=>b.onclick=()=>jawabGame(Number(b.dataset.i)));
+  hud(); mulaiTimer();
+}
+function mulaiTimer(){
+  clearInterval(gmTimer);
+  $("gm-timer").style.width = "100%";
+  gmTimer = setInterval(()=>{
+    GM.sisa -= 0.25;
+    $("gm-timer").style.width = Math.max(0,GM.sisa/WAKTU*100)+"%";
+    if(GM.sisa<=0){ clearInterval(gmTimer); jawabGame(-1); }
+  },250);
+}
+function jawabGame(i){
+  if(GM.kunci) return; GM.kunci = true; clearInterval(gmTimer);
+  const s = GM.soal, btns = [...$("gm-opts").children];
+  const ok = i>=0 && s.opsi[i]===s.ans;
+  btns.forEach((b,j)=>{ b.disabled = true; if(s.opsi[j]===s.ans) b.classList.add("right"); });
+  $("gm-hint").disabled = true;
+  if(ok){
+    const bonus = Math.ceil(GM.sisa/2) + GM.combo*2;
+    const poin = 10 + bonus - (s.urut?3:0);
+    GM.skor += Math.max(poin,5); GM.combo++; GM.benar++;
+    msg($("gm-fb"), `✅ Benar! +${Math.max(poin,5)} poin${GM.combo>1?` (combo 🔥 x${GM.combo})`:""}<br><small>${s.bahas}</small>`,"ok");
+  } else {
+    if(i>=0) btns[i].classList.add("wrong","shake");
+    GM.nyawa--; GM.combo = 0;
+    msg($("gm-fb"), `${i<0?"⏰ Waktu habis!":"❌ Belum tepat."} Jawaban benar: <b>${fmt(s.ans)}</b><br><small>${s.bahas}</small>`,"err");
+  }
+  hud();
+  $("gm-next").style.display = "block";
+  $("gm-next").textContent = (GM.nyawa<=0 || GM.ronde>=TOTAL_RONDE) ? "Lihat Hasil →" : "Lanjut →";
+}
+function akhirGame(){
+  clearInterval(gmTimer);
+  const menang = GM.nyawa>0;
+  const bintang = GM.benar>=9?3:GM.benar>=7?2:GM.benar>=4?1:0;
+  const d = load(KEY_GAME); d.push({waktu:now(),nama:GM.nama,skor:GM.skor,benar:GM.benar}); save(KEY_GAME,d);
+  $("gm-play").style.display="none"; $("gm-end").style.display="block";
+  $("gm-judul").textContent = menang ? "🎉 Misi Selesai!" : "💔 Nyawa Habis!";
+  $("gm-stars").textContent = "⭐".repeat(bintang) + "☆".repeat(3-bintang);
+  $("gm-final").textContent = GM.skor;
+  $("gm-ket").textContent = `${GM.benar} dari ${TOTAL_RONDE} soal benar • ` + (bintang===3?"Kamu jagoan statistika!":bintang>=1?"Bagus, coba lagi untuk skor lebih tinggi!":"Pelajari materi dulu, lalu coba lagi!");
+  renderGameBoard();
+}
+$("gm-mulai").onclick = mulaiGame;
+$("gm-ulang").onclick = () => { $("gm-end").style.display="none"; $("gm-start").style.display="block"; renderGameBoard(); };
+$("gm-next").onclick = () => { (GM.nyawa<=0 || GM.ronde>=TOTAL_RONDE) ? akhirGame() : soalBerikut(); };
+$("gm-hint").onclick = () => { if(GM.kunci||GM.soal.urut) return; GM.soal.urut = true; gambarChips(); $("gm-hint").disabled = true; };
+renderGameBoard();
+
+renderPresensi();
+</script>
+</body>
+</html>
